@@ -1,11 +1,13 @@
+import { message } from "antd";
 import Order from "../models/order.js";
 
 export const payBill = async (req, res) => {
-  const { email, items, receiver, totalAmount } = req.body;
+  const { email, image, items, receiver, totalAmount } = req.body;
 
   try {
     const newOrder = new Order({
       orderId: `ORD-${Date.now()}`,
+      image: image,
       userEmail: email,
       items,
       receiver,
@@ -37,5 +39,21 @@ export const getOrders = async(req, res) => {
   }catch(err){
     console.error("Lỗi khi lấy danh sách đơn hàng: ", err);
     return res.status(500).json({ message: "Đã xảy ra lỗi khi lấy danh sách đơn hàng" });
+  }
+}
+
+export const getOrdersById = async(req, res)=>{
+  const {orderId} = req.query;
+
+  try{
+    const order = await Order.findOne({orderId: orderId});
+
+    if(order == null){
+      return res.status(404).json({ message: "Không tìm thấy đơn hàng nào" });
+    }
+    return res.status(200).json({order});
+  }catch(err){
+    console.log("Lỗi khi lấy danh sách đơn hàng với orderId: ", err);
+    return res.status(500).json({message: "Đã xảy ra lỗi khi lấy danh sách đơn hàng by orderId"})
   }
 }

@@ -1,34 +1,35 @@
+import { useLocation } from "react-router-dom";
 import SidebarMenu from "../components/User/SidebarMenu";
 import Account from "./Account";
+import OrderDetail from "./OrderDetail";
 import OrderHistory from "./OrderHistory";
 import PaymentHistory from "./PaymentHistory";
-import { useNavigate, useLocation } from "react-router-dom";
 
 const UserProfile = () => {
-  const navigate = useNavigate();
-
+  const location = useLocation();
   const renderContent = () => {
-    switch (location.pathname) {
-      case "/user/profile":
-        return <Account />;
-      case "/user/orderhistory":
-        return <OrderHistory />;
-      case "/user/paymenthistory":
-        return <PaymentHistory />;
-      default:
-        return <Account />;
+    if (location.pathname === "/user/profile") {
+      return <Account />;
     }
+    if (location.pathname === "/user/order-history") {
+      return <OrderHistory />;
+    }
+    if (location.pathname === "/user/payment-history") {
+      return <PaymentHistory />;
+    }
+    if (location.pathname.startsWith("/user/order-history/order-detail/")) {
+      return <OrderDetail />;
+    }
+    return <Account />;
   };
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="w-100 grid grid-cols-12 gap-4">
         <div className="col-span-12 md:col-span-3">
-          <SidebarMenu/>
+          <SidebarMenu />
         </div>
-        <div className="col-span-12 md:col-span-9">
-          {renderContent()}
-        </div>
+        <div className="col-span-12 md:col-span-9">{renderContent()}</div>
       </div>
     </div>
   );

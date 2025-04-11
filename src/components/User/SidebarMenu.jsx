@@ -19,7 +19,7 @@ const SidebarMenu = () => {
         </div>
       </NavLink>
       <NavLink
-        to="/user/orderhistory"
+        to="/user/order-history"
         className={({ isActive }) =>
           `hover:bg-gray-100 border-b cursor-pointer ${
             isActive ? "bg-blue-100 text-blue-600 font-bold" : "text-gray-700"
@@ -32,7 +32,7 @@ const SidebarMenu = () => {
         </div>
       </NavLink>
       <NavLink
-        to="/user/paymenthistory"
+        to="/user/payment-history"
         className={({ isActive }) =>
           `hover:bg-gray-100 border-b cursor-pointer ${
             isActive ? "bg-blue-100 text-blue-600 font-bold" : "text-gray-700"

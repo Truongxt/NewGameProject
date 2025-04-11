@@ -6,8 +6,10 @@ const orderSchema = new mongoose.Schema({
   items: [
     {
       productID: { type: String, required: true },
+      image: {type: String, require: true},
       productName: {type: String, require: true},
       quantity: { type: Number, required: true },
+      totalPrice: {type: Number, require: true}
     },
   ],
   receiver: {type: String, required: true},

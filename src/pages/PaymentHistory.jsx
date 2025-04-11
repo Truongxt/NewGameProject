@@ -2,7 +2,7 @@ import React from "react";
 
 const PaymentHistory = () => {
   return (
-    <div className="mt-4 p-4 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full">
       <h4 className="text-lg font-bold mb-2">Lịch sử giao dịch</h4>
       <p className="font-semibold text-gray-800 mb-4">
         Hiển thị tất cả các giao dịch bạn đã thực hiện tại Gamekey Shop

@@ -5,7 +5,7 @@ import { useCart } from "../provider/CartProvider";
 
 const OrderHistory = () => {
   const { user, formatDate } = useUser();
-  const {formatCurrency} = useCart();
+  const { formatCurrency } = useCart();
   const [orders, setOrders] = useState([]);
   useEffect(() => {
     const fetchOrders = async () => {
@@ -17,18 +17,18 @@ const OrderHistory = () => {
           }
         );
         const data = await response.json();
-        console.log(data)
-        setOrders(data.orders);
-        console.log(orders)
+        if (data.orders != null) {
+          setOrders(data.orders);
+        }
       } catch (err) {
         console.log("Xảy ra lỗi khi get order: ", err);
       }
     };
     fetchOrders();
   }, []);
-  
+
   return (
-    <div className="mt-4 p-4 bg-white rounded-lg shadow-md max-w-4xl mx-auto">
+    <div className="bg-white p-6 rounded-lg shadow-md w-full">
       <h4 className="text-lg font-bold mb-2">Lịch sử đơn hàng</h4>
       <p className="font-semibold text-gray-800 mb-4">
         Hiển thị thông tin các sản phẩm bạn đã mua tại Gamekey Shop
@@ -90,16 +90,28 @@ const OrderHistory = () => {
           {orders.length > 0 ? (
             orders.map((item) => (
               <tr key={item.orderId}>
-                <td className="border border-gray-300 px-4 py-2">{formatDate(item.orderDate)}</td>
-                <td className="border border-gray-300 px-4 py-2">{item.orderId}</td>
-                <td className="border border-gray-300 px-4 py-2">{item.items.map((sp)=>(
-                  <div className="flex justify-between my-2">
-                    <p>{sp.productName}</p>
-                    <p>x{sp.quantity}</p>
-                  </div>
-                ))}</td>
-                <td className="border border-gray-300 px-4 py-2">{formatCurrency(item.totalAmount)}</td>
-                <td className="border border-gray-300 px-4 py-2"><Link>Chi tiết</Link></td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {formatDate(item.orderDate)}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {item.orderId}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {item.items.map((sp) => (
+                    <div className="flex justify-between my-2" key={sp.id}>
+                      <p>{sp.productName}</p>
+                      <p>x{sp.quantity}</p>
+                    </div>
+                  ))}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  {formatCurrency(item.totalAmount)}
+                </td>
+                <td className="border border-gray-300 px-4 py-2">
+                  <Link to={`/user/order-history/order-detail/${item.orderId}`}>
+                    Chi tiết
+                  </Link>
+                </td>
               </tr>
             ))
           ) : (

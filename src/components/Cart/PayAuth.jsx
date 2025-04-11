@@ -35,8 +35,10 @@ const PayAuth = () => {
           authCode: authCodeInput,
           items: cart.map((item) => ({
             productID: item.id,
+            image: item.thumbnail,
             productName: item.title,
             quantity: item.quantity,
+            totalPrice: item.price * item.quantity
           })),
           receiver: user.email,
           totalAmount: totalPrice,
@@ -44,7 +46,7 @@ const PayAuth = () => {
       });
       
       alert("Thanh toán thành công!");
-      navigate("/user/orderhistory");
+      navigate("/user/order-history");
       await fetch("http://localhost:5000/users/reset-authCode", {
         method: "PATCH",
         headers: {

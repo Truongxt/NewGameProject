@@ -14,6 +14,7 @@ import OrderHistory from "./pages/OrderHistory";
 import PaymentHistory from "./pages/PaymentHistory";
 import { CartProvider } from "./provider/CartProvider";
 import { UserProvider } from "./provider/UserProvider";
+import OrderDetail from "./pages/OrderDetail";
 
 function App() {
   return (
@@ -33,12 +34,15 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/user" element={<UserProfile />}>
                 <Route path="/user/profile" element={<Account />} />
-                <Route path="/user/orderhistory" element={<OrderHistory />} />
+                <Route path="/user/order-history" element={<OrderHistory />} />
                 <Route
-                  path="/user/paymenthistory"
+                  path="/user/payment-history"
                   element={<PaymentHistory />}
                 />
-                {/* <Route path='/user/security' element={< />}/> */}
+                <Route
+                  path="/user/order-history/order-detail/:id"
+                  element={<OrderDetail />}
+                />
               </Route>
             </Routes>
           </main>
