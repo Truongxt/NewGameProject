@@ -800,5 +800,19 @@
       "discount": "30%",
       "original_price": 1042857
     }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "username": "hatuan04",
+      "name": "Hà Thanh Tuấn",
+      "sex": "Nam",
+      "email": "hthanhtuan.2307@gmail.com",
+      "createDate": "2020-03-10T14:12:30Z",
+      "phone": "0367155132",
+      "password": "12345678",
+      "soDu": 2000000,
+      "soTienDaNap": 1000000
+    }
   ]
 }

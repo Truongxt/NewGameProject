@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getGameById } from '../api/api';
 import { Row, Col, Image, Badge, Button, Alert, Typography, Divider, Space } from 'antd';
 import GoBack from '../components/GoBack';
-
+import { useCart } from '../provider/CartProvider';
 const { Title, Text } = Typography;
 
 function formatPrice(price) {
@@ -13,7 +13,7 @@ function formatPrice(price) {
 function GameDetail() {
   const { id } = useParams();
   const [game, setGame] = useState({});
-
+  const { addToCart } = useCart();
   useEffect(() => {
     const fetchGame = async () => {
       try {
@@ -46,7 +46,7 @@ function GameDetail() {
             </Text>
             <Space size="large">
               <Button type="primary" size="large">Mua ngay</Button>
-              <Button size="large">Thêm vào giỏ hàng</Button>
+              <Button size="large" onClick={()=>{addToCart(game)}}>Thêm vào giỏ hàng</Button>
             </Space>
           </Space>
         </Col>
