@@ -18,7 +18,7 @@ import OrderDetail from "./pages/OrderDetail";
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[rgb(242,243,245)]">
       <CartProvider>
         <UserProvider>
           <Navbar />
