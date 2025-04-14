@@ -13,13 +13,22 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const data = await loginUser(email, password);
-      setUser(...data); // Lưu thông tin người dùng vào context
-      alert("Đăng nhập thành công!"); // Hiển thị thông báo
-      navigate("/"); // Chuyển hướng về trang chủ
+      const response = await fetch(
+        `http://localhost:5000/users/login?email=${email}&password=${password}`,
+        { method: "GET" }
+      );
+      const data = await response.json();
+      if(data.user == null){
+        throw new Error(
+          data.message
+        );
+      }
+      setUser(data.user);
+      localStorage.setItem("token", data.token);
+      alert(data.message);
+      navigate("/");
     } catch (error) {
-      console.error("Lỗi khi gọi API:", error);
-      alert("Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin!");
+      alert(error);
     }
   };
 

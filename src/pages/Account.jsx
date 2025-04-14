@@ -9,6 +9,7 @@ const Account = () => {
   const [cccd, setCccd] = useState(user.cccd);
   const [sex, setSex] =useState(user.sex);
 
+
   const inputClass =
     "w-full md:w-1/2 border border-gray-300 rounded px-4 pt-[14px] focus:ring-2 focus:ring-blue-500 focus:outline-none peerplaceholder-transparent";
   const labelClass =
@@ -22,7 +23,7 @@ const Account = () => {
           <div className="grid grid-cols-4">
             <div className="space-y-2">
               <p>Tên đăng nhập</p>
-              <p className="font-bold text-sm">{user.username}</p>
+              <p className="font-bold text-sm">{user.userName}</p>
             </div>
             <div className="space-y-2">
               <p>Email</p>

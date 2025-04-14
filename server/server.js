@@ -5,6 +5,8 @@ import dotenv from "dotenv"
 import mongoose from "mongoose";
 import cors from 'cors'
 import orderRoute from "./routes/orderRoute.js";
+import transRoute from "./routes/transactionRoute.js";
+
 dotenv.config();
 
 const app = express();
@@ -20,7 +22,8 @@ app.use(express.json());
 
 app.use("/users", userRoute);
 app.use("/games", gameRoute);
-app.use("/orders", orderRoute)
+app.use("/orders", orderRoute);
+app.use("/trans", transRoute);
 
 app.listen(port, () => {
   console.log(`Server is running at 

@@ -34,7 +34,7 @@ const OrderHistory = () => {
         Hiển thị thông tin các sản phẩm bạn đã mua tại Gamekey Shop
       </p>
 
-      <form className="mb-4 grid grid-cols-1 md:grid-cols-6 gap-4">
+      <form className="mb-4 grid grid-cols-12 md:grid-cols-6 gap-4">
         <input
           type="text"
           placeholder="Mã đơn hàng"
@@ -62,7 +62,7 @@ const OrderHistory = () => {
         />
         <button
           type="submit"
-          className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
+          className="col-span-1 bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600"
         >
           Lọc
         </button>
@@ -98,7 +98,7 @@ const OrderHistory = () => {
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {item.items.map((sp) => (
-                    <div className="flex justify-between my-2" key={sp.id}>
+                    <div className="flex justify-between my-2" key={sp.productId}>
                       <p>{sp.productName}</p>
                       <p>x{sp.quantity}</p>
                     </div>

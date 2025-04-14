@@ -8,8 +8,15 @@ import { useEffect, useState } from "react";
 import PayBtn from "./PayBtn";
 const CartList = (props) => {
   const { status, setStatus } = props;
-  const { cart, removeFromCart, updateQuantity, totalItems, totalPrice, formatCurrency } = useCart(); 
-  const { user} = useUser();
+  const {
+    cart,
+    removeFromCart,
+    updateQuantity,
+    totalItems,
+    totalPrice,
+    formatCurrency,
+  } = useCart();
+  const { user } = useUser();
   const navigate = useNavigate();
   const [myUser, setMyUser] = useState(user ? user : { soDu: 0 });
 
@@ -127,7 +134,7 @@ const CartList = (props) => {
               {myUser.soDu < totalPrice ? (
                 <>
                   <p>Số tiền cần nạp thêm</p>
-                  <p>{Math.abs(formatCurrency(myUser.soDu - totalPrice))}</p>
+                  <p>{formatCurrency(Math.abs(myUser.soDu - totalPrice))}</p>
                 </>
               ) : (
                 <>
@@ -165,6 +172,7 @@ const CartList = (props) => {
                   />
                 ) : (
                   <PayBtn
+                    path="/deposit"
                     content="Nạp thêm vào tài khoản"
                     className="bg-blue-600 py-2 rounded text-white font-bold"
                   />

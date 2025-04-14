@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 
 const PayAuth = () => {
   const {user} = useUser();
-  const {cart, totalPrice} = useCart();
+  const {cart, clearCart ,totalPrice} = useCart();
   const [authCodeInput, setAuthCodeInput] = useState("");
   const navigate = useNavigate();
+
   const handleOnChange = (e) =>{
     setAuthCodeInput(e.target.value);
   }
@@ -44,9 +45,11 @@ const PayAuth = () => {
           totalAmount: totalPrice,
         }),
       });
-      
+
+      clearCart();
       alert("Thanh toán thành công!");
       navigate("/user/order-history");
+      
       await fetch("http://localhost:5000/users/reset-authCode", {
         method: "PATCH",
         headers: {

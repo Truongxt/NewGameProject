@@ -11,51 +11,73 @@ const Register = () => {
   const [phone, setPhone] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [errors, setErrors] = useState({});
-
   const validateForm = () => {
     const newErrors = {};
-  
+
     // 1. Họ tên: Viết hoa chữ đầu và có dấu cách giữa các từ
     if (!/^[A-ZÀ-Ỹ][a-zà-ỹ]*(\s[A-ZÀ-Ỹ][a-zà-ỹ]*)+$/.test(name)) {
-      newErrors.name = "Họ và tên phải viết hoa chữ đầu và có dấu cách giữa các từ.";
+      newErrors.name =
+        "Họ và tên phải viết hoa chữ đầu và có dấu cách giữa các từ.";
     }
-  
+
     // 2. Email: Phải có đuôi @gmail.com và không bắt đầu bằng ký tự đặc biệt hoặc số
     if (!/^[a-zA-Z][a-zA-Z0-9._%+-]*@gmail\.com$/.test(email)) {
-      newErrors.email = "Email phải có đuôi @gmail.com và không được bắt đầu bằng ký tự đặc biệt hoặc số.";
+      newErrors.email =
+        "Email phải có đuôi @gmail.com và không được bắt đầu bằng ký tự đặc biệt hoặc số.";
     }
-  
-    // 3. Tên đăng nhập: Viết liền không dấu
-    if (!/^[a-zA-Z0-9]+$/.test(userName)) {
-      newErrors.userName = "Tên đăng nhập phải viết liền không dấu.";
-    }
-  
+
     // 4. Mật khẩu: Ít nhất 1 ký tự đặc biệt, 1 chữ số và 1 ký tự viết hoa
-    if (!/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(password)) {
-      newErrors.password = "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt, 1 chữ số và 1 ký tự viết hoa.";
+    if (
+      !/^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])[A-Za-z\d@$!%*?&#]{8,}$/.test(
+        password
+      )
+    ) {
+      newErrors.password =
+        "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt, 1 chữ số và 1 ký tự viết hoa.";
     }
-  
+
     // 5. Số điện thoại: Phải bắt đầu bằng số 0 (chỉ kiểm tra nếu người dùng nhập)
     if (phone && !/^0\d{9,10}$/.test(phone)) {
-      newErrors.phone = "Số điện thoại phải bắt đầu bằng số 0 và có 10-11 chữ số.";
+      newErrors.phone =
+        "Số điện thoại phải bắt đầu bằng số 0 và có 10-11 chữ số.";
     }
-  
+
     // 6. Xác nhận mật khẩu: Phải khớp với mật khẩu
     if (password !== rePassword) {
       newErrors.rePassword = "Mật khẩu xác nhận không khớp.";
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Trả về true nếu không có lỗi
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      createUser(name, email, password, userName, phone);
-      alert("Đăng ký thành công!");
-      // Thực hiện logic đăng ký ở đây (ví dụ: gọi API)
-      navigate("/login");
+      try {
+        const response = await fetch("http://localhost:5000/users/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password,
+            phone: phone,
+          }),
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(
+            data.message || "Đăng ký thất bại. Vui lòng thử lại."
+          );
+        }
+
+        alert(data.message);
+        navigate("/login")
+      } catch (err) {
+        console.log("Xảy ra lỗi khi đăng ký tài khoản: ", err);
+        alert(err.message);
+      }
     }
   };
 
@@ -85,7 +107,9 @@ const Register = () => {
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
-                  {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                  {errors.name && (
+                    <p className="text-red-500 text-sm">{errors.name}</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <input
@@ -95,17 +119,9 @@ const Register = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                   />
-                  {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-                </div>
-                <div className="mb-4">
-                  <input
-                    type="text"
-                    className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Tên đăng nhập"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                  />
-                  {errors.userName && <p className="text-red-500 text-sm">{errors.userName}</p>}
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">{errors.email}</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <input
@@ -115,7 +131,9 @@ const Register = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
-                  {errors.password && <p className="text-red-500 text-sm">{errors.password}</p>}
+                  {errors.password && (
+                    <p className="text-red-500 text-sm">{errors.password}</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <input
@@ -125,7 +143,9 @@ const Register = () => {
                     value={rePassword}
                     onChange={(e) => setRePassword(e.target.value)}
                   />
-                  {errors.rePassword && <p className="text-red-500 text-sm">{errors.rePassword}</p>}
+                  {errors.rePassword && (
+                    <p className="text-red-500 text-sm">{errors.rePassword}</p>
+                  )}
                 </div>
                 <div className="mb-4">
                   <input
@@ -135,7 +155,9 @@ const Register = () => {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                   />
-                  {errors.phone && <p className="text-red-500 text-sm">{errors.phone}</p>}
+                  {errors.phone && (
+                    <p className="text-red-500 text-sm">{errors.phone}</p>
+                  )}
                 </div>
 
                 <button

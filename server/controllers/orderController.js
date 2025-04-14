@@ -1,8 +1,9 @@
-import { message } from "antd";
 import Order from "../models/order.js";
-
+import User from "../models/user.js"
 export const payBill = async (req, res) => {
   const { email, image, items, receiver, totalAmount } = req.body;
+
+  const user = await User.findOne({email: email});
 
   try {
     const newOrder = new Order({
@@ -14,7 +15,11 @@ export const payBill = async (req, res) => {
       totalAmount
     });
 
+    user.soDu -= totalAmount;
+
+    await user.save();
     await newOrder.save();
+
 
     return res.status(200).json({
       message: "Thanh toán thành công",

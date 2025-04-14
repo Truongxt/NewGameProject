@@ -21,6 +21,10 @@ export const CartProvider = ({ children }) => {
         });
     }, []);
 
+    const clearCart = useCallback(() => {
+        setCart([]); 
+    }, []);
+
     const updateQuantity = useCallback((productId, quantity) => {
         setCart((prevCart) =>
             prevCart.map((p) =>
@@ -55,13 +59,14 @@ export const CartProvider = ({ children }) => {
 
     const cartContextValue = useMemo(() => ({
         cart,
+        clearCart,
         addToCart,
         updateQuantity,
         removeFromCart,
         totalItems,
         totalPrice,
         formatCurrency
-    }), [cart, addToCart, updateQuantity, removeFromCart, totalItems, totalPrice, formatCurrency]);
+    }), [cart, clearCart, addToCart, updateQuantity, removeFromCart, totalItems, totalPrice, formatCurrency]);
 
     return (
         <CartContext.Provider value={cartContextValue}>

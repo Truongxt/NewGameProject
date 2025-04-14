@@ -15,6 +15,8 @@ import PaymentHistory from "./pages/PaymentHistory";
 import { CartProvider } from "./provider/CartProvider";
 import { UserProvider } from "./provider/UserProvider";
 import OrderDetail from "./pages/OrderDetail";
+import DepositPage from "./pages/DepositPage";
+import ForgotPassword from "./pages/ForgotPassword";
 
 function App() {
   return (
@@ -43,7 +45,10 @@ function App() {
                   path="/user/order-history/order-detail/:id"
                   element={<OrderDetail />}
                 />
+                <Route path="/user/password"/>
               </Route>
+              <Route path="/deposit" element={<DepositPage/>}/>
+              <Route path="/forgot-password" element={<ForgotPassword/>}/>
             </Routes>
           </main>
         </UserProvider>
