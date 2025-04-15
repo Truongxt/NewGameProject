@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Register.css";
-import { createUser } from "../api/api";
 const Register = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -24,6 +23,11 @@ const Register = () => {
     if (!/^[a-zA-Z][a-zA-Z0-9._%+-]*@gmail\.com$/.test(email)) {
       newErrors.email =
         "Email phải có đuôi @gmail.com và không được bắt đầu bằng ký tự đặc biệt hoặc số.";
+    }
+
+    // 3. User name: Chỉ chứa các ký tự viết thường
+    if (!/^[a-z0-9]+$/.test(userName)) {
+      newErrors.userName = "Tên đăng nhập chỉ được chứa các ký tự viết thường.";
     }
 
     // 4. Mật khẩu: Ít nhất 1 ký tự đặc biệt, 1 chữ số và 1 ký tự viết hoa
@@ -61,6 +65,7 @@ const Register = () => {
           body: JSON.stringify({
             name: name,
             email: email,
+            userName: userName, 
             password: password,
             phone: phone,
           }),
@@ -73,7 +78,7 @@ const Register = () => {
         }
 
         alert(data.message);
-        navigate("/login")
+        navigate("/login");
       } catch (err) {
         console.log("Xảy ra lỗi khi đăng ký tài khoản: ", err);
         alert(err.message);
@@ -109,6 +114,18 @@ const Register = () => {
                   />
                   {errors.name && (
                     <p className="text-red-500 text-sm">{errors.name}</p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <input
+                    type="text"
+                    className="w-full p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    placeholder="Tên đăng nhập"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                  />
+                  {errors.userName && (
+                    <p className="text-red-500 text-sm">{errors.userName}</p>
                   )}
                 </div>
                 <div className="mb-4">

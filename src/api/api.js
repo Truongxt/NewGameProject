@@ -1,5 +1,4 @@
 export const api = "http://localhost:3000/games";
-export const user_api="http://localhost:3000/users"
 
 export const getGames = async () => {
     const response = await fetch(api);
@@ -93,32 +92,3 @@ export const getGameByParams = async (params) => {
     return { games: data, total: totalCount };
 }
 //end end
-
-export const createUser = async (name, email, password, username, phone) => {
-    const response = await fetch(user_api, {
-        method: "POST", // Sử dụng phương thức POST để tạo tài khoản mới
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            username,
-            phone,
-            name,
-            email,
-            password,
-        }),
-    });
-
-    if (!response.ok) {
-        throw new Error("Tạo tài khoản thất bại");
-    }
-
-    const data = await response.json();
-    return data; // Trả về thông tin người dùng vừa được tạo
-};
-
-export const loginUser = async (email, pwd) => {
-    const response = await fetch(`${user_api}?email=${email}&password=${pwd}`);
-    const data = await response.json();
-    return data;
-}

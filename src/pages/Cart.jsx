@@ -3,7 +3,7 @@ import { useCart } from "../provider/CartProvider";
 import CartList from "../components/Cart/CartList";
 import PayAuth from "../components/Cart/PayAuth";
 const Cart = () => {
-  const { totalItems } = useCart(); // Fixed typo in 'removeFromCart'
+  const { totalItems } = useCart(); 
   const [status, setStatus] = useState(0);
 
   return (

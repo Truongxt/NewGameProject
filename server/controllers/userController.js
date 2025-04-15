@@ -48,44 +48,55 @@ export const resetAuthCode = async (req, res) => {
 };
 
 export const register = async (req, res) => {
-  const { name, email, userName, password, phone } = req.body;
+  try {
+    const { name, email, userName, password, phone } = req.body;
 
-  const existingUser = await User.findOne({ email: email });
-  if (existingUser) {
-    return res.status(400).json({ message: "Email này đã tồn tại" });
+    // Kiểm tra email đã tồn tại
+    let existingUser = await User.findOne({ email: email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email này đã tồn tại" });
+    }
+
+    // Kiểm tra userName đã tồn tại
+    existingUser = await User.findOne({ userName: userName });
+    if (existingUser) {
+      return res.status(400).json({ message: "User name đã tồn tại" });
+    }
+
+    // Tạo người dùng mới
+    const newUser = new User({
+      name,
+      email,
+      phone,
+      userName,
+      password,
+    });
+
+    await newUser.save();
+
+    // Tạo token xác thực
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "15m",
+    });
+
+    const verificationLink = `http://localhost:5000/users/verify-account?token=${token}`;
+
+    // Gửi email xác thực
+    await sendVerificationEmail(
+      email,
+      "Xác thực tài khoản",
+      "Link xác thực đăng ký tài khoản",
+      verificationLink
+    );
+
+    return res.json({
+      message:
+        "Đăng ký tài khoản thành công. Vui lòng kiểm tra email để xác thực tài khoản",
+    });
+  } catch (error) {
+    console.error("Lỗi khi đăng ký tài khoản:", error);
+    return res.status(500).json({ message: "Lỗi server. Không thể đăng ký tài khoản" });
   }
-  existingUser = await User.findOne({ userName: userName });
-  if (existingUser) {
-    return res.status(400).json({ message: "User name đã tồn tại" });
-  }
-
-  const newUser = new User({
-    name,
-    email,  
-    phone,
-    userName,
-    password,
-  });
-
-  await newUser.save();
-
-  const token = jwt.sign({ email }, process.env.JWT_SECRET, {
-    expiresIn: "15m",
-  });
-
-  const verificationLink = `http://localhost:5000/users/verify-account?token=${token}`;
-
-  await sendVerificationEmail(
-    email,
-    "Xác thực tài khoản",
-    "Link xác thực đăng ký tài khoản",
-    verificationLink
-  );
-
-  return res.json({
-    message:
-      "Đăng ký tài khoản thành công. Vui lòng kiểm tra email để xác thực tài khoản",
-  });
 };
 
 export const verifyAccount = async (req, res) => {
