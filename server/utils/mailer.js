@@ -7,13 +7,17 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url); 
 const __dirname = dirname(__filename);
 
-export const sendVerificationEmail = async (toEmail, subject, authContent, code) => {
-  const templatePath = path.join(__dirname, "../emailSample", "email.html");
+const typeEmail = [{code: {html: "sendCodeEmail.html", content: "ma-xac-thuc"}}, {link: {html: "sendLinkEmail.html", content: "link-xac-thuc"}}];
+
+export const sendVerificationEmail = async (toEmail, subject, authContent, code, type) => {
+  const emailType = typeEmail.find((item) => item[type]); 
+
+  const templatePath = path.join(__dirname, "../emailSample", emailType[type].html);
 
   let html = fs.readFileSync(templatePath, "utf-8");
 
   html = html.replace("noi-dung-xac-thuc", authContent);
-  html = html.replace("ma-xac-thuc", code);
+  html = html.replace(emailType[type].content, code);
 
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -23,6 +27,7 @@ export const sendVerificationEmail = async (toEmail, subject, authContent, code)
     },
   });
 
+  // Cấu hình thông tin email
   const mailOptions = {
     from: process.env.EMAIL_USER, 
     to: toEmail,
@@ -30,5 +35,6 @@ export const sendVerificationEmail = async (toEmail, subject, authContent, code)
     html: html,
   };
 
+  // Gửi email
   await transporter.sendMail(mailOptions);
 };

@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import { sendVerificationEmail } from "../utils/mailer.js";
 import jwt from "jsonwebtoken";
 import doten from "dotenv";
+import bcrypt from "bcrypt";
 
 doten.config();
 
@@ -11,7 +12,7 @@ export const sendCode = async (req, res) => {
   const code = Math.floor(100000 + Math.random() * 900000);
 
   try {
-    await sendVerificationEmail(email, subject, content, code);
+    await sendVerificationEmail(email, subject, content, code, "code");
 
     const user = await User.findOneAndUpdate({ email }, { authCode: code });
 
@@ -69,7 +70,7 @@ export const register = async (req, res) => {
       email,
       phone,
       userName,
-      password,
+      password: await bcrypt.hash(password, 10),
     });
 
     await newUser.save();
@@ -86,7 +87,8 @@ export const register = async (req, res) => {
       email,
       "Xác thực tài khoản",
       "Link xác thực đăng ký tài khoản",
-      verificationLink
+      verificationLink,
+      "link"
     );
 
     return res.json({
@@ -121,15 +123,18 @@ export const verifyAccount = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.query;
+  const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findOne({ email : email });
+    
+    const isMatch = await bcrypt.compare(password, user.password);
 
-    if (user == null || user.password != password) {
+    if (user === undefined || !isMatch) {
       return res
         .status(401)
         .json({ message: "Tài khoản hoặc mật khẩu không chính xác" });
     }
+    
     if (!user.verified) {
       return res.status(403).json({ message: "Tài khoản chưa được xác thực" });
     }
@@ -138,7 +143,7 @@ export const login = async (req, res) => {
       expiresIn: "3h",
     });
 
-    return res.json({
+    return res.status(200).json({
       message: "Đăng nhập thành công",
       user: {
         name: user.name,
@@ -189,5 +194,93 @@ export const getCurrentUser = async (req, res) => {
   } catch (err) {
     console.error("Lỗi khi xác thực token:", err);
     return res.status(401).json({ message: "Token không hợp lệ" });
+  }
+};
+
+export const changePassword = async (req, res) =>{
+  const {email, currentPass, newPass} = req.body;
+  
+  try{
+    let user = await User.findOne({email: email});
+
+    if(user == null){
+      return res.status(404).json({message: "Không tồn tại user này"});
+    }
+    const isMatch = await bcrypt.compare(currentPass, user.password);
+    if(!isMatch){
+      return res.status(400).json({message: "Mật khẩu hiện tại không đúng"});
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000);
+
+    user.tempPassword = await bcrypt.hash(newPass, 10);
+    await user.save();
+
+    await sendVerificationEmail(
+      email,
+      "Đổi mật khẩu",
+      "Vui lòng sử dụng mã xác thực bên dưới để đổi mật khẩu.",
+      code,
+      "code"
+    );
+
+    return res.status(200).json({message: "Mã xác thực đã được gửi đến email của bạn!"})
+  }catch(err){
+    return res.status(500).json({message: "Xảy ra lỗi khi đổi mật khẩu"});
+  }
+}
+
+export const forgotPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Email này chưa đăng ký tài khoản!" });
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000); // Mã code dùng để đặt lại mật khẩu
+
+    user.authCode = code;
+    user.tempPassword = await bcrypt.hash(newPassword, 10); 
+    await user.save();
+
+    await sendVerificationEmail(
+      email,
+      "Đặt lại mật khẩu",
+      "Vui lòng sử dụng mã xác thực bên dưới để đặt lại mật khẩu.",
+      code,
+      "code"
+    );
+
+    return res.json({ message: "Mã xác thực đã được gửi đến email của bạn." });
+  } catch (err) {
+    console.error("Lỗi khi gửi mã xác thực:", err);
+    return res.status(500).json({ message: "Lỗi khi yêu cầu đặt lại mật khẩu!" });
+  }
+};
+
+export const verifyResetCode = async (req, res) => {
+  const { email, code } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Email này chưa đăng ký tài khoản!" });
+    }
+
+    if (user.authCode != code) {
+      return res.status(400).json({ message: "Mã xác thực không đúng hoặc đã hết hạn." });
+    }
+
+    user.password = user.tempPassword;
+    user.authCode = null;
+    user.tempPassword = null; 
+    await user.save();
+
+    return res.json({ message: "Đặt lại mật khẩu thành công!" });
+  } catch (err) {
+    console.error("Lỗi khi xác thực mã:", err);
+    return res.status(500).json({ message: "Lỗi khi xác thực mã." });
   }
 };

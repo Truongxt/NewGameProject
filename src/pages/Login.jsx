@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Login.css";
 import { useUser } from "../provider/UserProvider";
+import { login } from "../api/api";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const { setUser } = useUser();
@@ -12,22 +14,18 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `http://localhost:5000/users/login?email=${email}&password=${password}`,
-        { method: "GET" }
-      );
+      const response = await login({ email, password });
       const data = await response.json();
-      if(data.user == null){
-        throw new Error(
-          data.message
-        );
+      if (!response.ok) {
+        toast.warn(data.message);
+        return;
       }
+      toast.success(data.message);
       setUser(data.user);
       localStorage.setItem("token", data.token);
-      alert(data.message);
       navigate("/");
     } catch (error) {
-      alert(error);
+      toast.warn(error);
     }
   };
 

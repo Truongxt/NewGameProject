@@ -4,6 +4,7 @@ import Account from "./Account";
 import OrderDetail from "./OrderDetail";
 import OrderHistory from "./OrderHistory";
 import PaymentHistory from "./PaymentHistory";
+import Security from "./Security";
 
 const UserProfile = () => {
   const location = useLocation();
@@ -19,6 +20,9 @@ const UserProfile = () => {
     }
     if (location.pathname.startsWith("/user/order-history/order-detail/")) {
       return <OrderDetail />;
+    }
+    if (location.pathname === "/user/security") {
+      return <Security />;
     }
     return <Account />;
   };

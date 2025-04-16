@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useMemo, useCallback, useEffect } from "react";
+import { toast } from "react-toastify";
 
 const CartContext = createContext();
 
@@ -19,6 +20,7 @@ export const CartProvider = ({ children }) => {
                 return [...prevCart, { ...product, quantity:1 }];
             }
         });
+        toast.success(`Thêm ${product.title} vào giỏ hàng`);
     }, []);
 
     const clearCart = useCallback(() => {
