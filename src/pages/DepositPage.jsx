@@ -124,7 +124,7 @@ export default function DepositPage() {
     }
   };
   return (
-    <div className="relative max-w-7xl mx-auto px-6 py-8 rounded shadow bg-white mt-7">
+    <div className="relative max-w-7xl mx-auto px-6 py-8 rounded shadow bg-white my-7">
       <div>
         <div>
           <h2 className="text-xl font-medium mb-2">Nạp tiền vào tài khoản</h2>

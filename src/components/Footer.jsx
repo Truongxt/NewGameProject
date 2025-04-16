@@ -30,7 +30,7 @@ export default function Footer() {
         <FaAward className="absolute right-[100px] top-[10px] text-[130px] text-[rgb(0,133,204)]"/>
       </div>
       <div className="flex justify-center my-3">
-        <p className="text-sm">© 2025 ShopGame Copyright. All Rights Reserved</p>
+        <p className="text-sm text-gray-600">© 2025 ShopGame Copyright. All Rights Reserved</p>
       </div>
     </div>
   );
