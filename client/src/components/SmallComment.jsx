@@ -9,7 +9,11 @@ export const CommentItem = ({
   gameId,
   setCurrentShow,
   currentShow,
-  handleOnSendComment
+  handleOnRepCmt,
+  setReplyCmt,
+  replyCmt,
+  errors,
+  replySuccess
 }) => {
   const { formatDate } = useUser();
   const [cmts, setCmts] = useState([]);
@@ -26,7 +30,8 @@ export const CommentItem = ({
 
   useEffect(() => {
     fetchCmt();
-  }, []);
+    
+  }, [replySuccess]);
 
   return (
     <div>
@@ -54,11 +59,21 @@ export const CommentItem = ({
         {currentShow == parentId ? (
           <div className="relative">
             <input
+            value={replyCmt}
+              onChange={(e) => {
+                setReplyCmt(e.target.value);
+              }}
               type="text"
               style={{ width: "100%" }}
               className="my-2 border border-gray-300 rounded px-3 py-2 hover:outline-none hover:ring-1 hover:ring-[rgb(36,122,242)] focus:outline-none focus:ring-1 focus:ring-[rgb(36,122,242)]"
             />
-            <IoIosSend className="absolute right-2 top-[17px] text-2xl" onClick={(e)=>{handleOnSendComment(e)}}/>
+            <IoIosSend
+              className="absolute right-2 top-[17px] text-2xl hover:cursor-pointer"
+              onClick={(e) => {
+                handleOnRepCmt(e);
+              }}
+            />
+             {errors.reply && (<p className="text-red-500 text-sm">{errors.reply}</p>)}
           </div>
         ) : (
           ""

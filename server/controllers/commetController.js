@@ -6,7 +6,7 @@ export const sendComment = async (req, res) => {
   try {
     const user = await User.findOne({ email: userEmail });
     if (!user) {
-      return res.status(400).json({ message: "Không tồn tại người dùng" });
+      return res.status(400).json({ message: "Bạn phải đăng nhập để bình luận." });
     }
     const userName = user.name;
 

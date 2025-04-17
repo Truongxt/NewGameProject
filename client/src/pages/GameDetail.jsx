@@ -35,7 +35,23 @@ function GameDetail() {
   const { addToCart } = useCart();
   const [cmts, setCmts] = useState([]); // các cmt mà user đã bình luận trước đó được fetch về
   const [cmt, setCmt] = useState(""); //cmt trên ô nhập bình luận
-  const [currentShow, setCurrentShow] = useState(0);
+  const [replyCmt, setReplyCmt] = useState("");
+  const [currentShow, setCurrentShow] = useState("");
+  const [errors, setErrors] = useState({});
+  const [isCmtFocus, setCmtFocus] = useState(false);
+  const [replySuccess, setStatusReply] = useState(false);
+
+  const validate = () => {
+    let newErr = {};
+    if (isCmtFocus && cmt == "") {
+      newErr.cmt = "Hãy nhập bình luận trước khi gửi.";
+    }
+    if (currentShow && replyCmt == "") {
+      newErr.reply = "Hãy nhập bình luận trước khi gửi.";
+    }
+    setErrors(newErr);
+    return Object.keys(newErr).length === 0;
+  };
 
   const fetchCmt = async () => {
     try {
@@ -67,22 +83,51 @@ function GameDetail() {
       toast.warn("Bạn cần đăng nhập để bình luận.");
       return;
     }
-    try {
-      const response = await comment({
-        gameId: id,
-        userEmail: user.email,
-        content: cmt,
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        toast.warn(data.message);
-        return;
+    if (validate()) {
+      try {
+        const response = await comment({
+          gameId: id,
+          userEmail: user.email,
+          content: cmt,
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          toast.warn(data.message);
+          return;
+        }
+        toast.success(data.message);
+        fetchCmt();
+        setCmt("");
+      } catch (err) {
+        toast.warn(err);
       }
-      toast.success(data.message);
-      fetchCmt();
-      setCmt("");
-    } catch (err) {
-      toast.warn(err);
+    }
+  };
+
+  const handleOnRepCmt = async () => {
+    if (user == null) {
+      toast.warn("Bạn cần đăng nhập để bình luận.");
+      return;
+    }
+    if (validate()) {
+      try {
+        const response = await comment({
+          gameId: id,
+          userEmail: user.email,
+          content: replyCmt,
+          responseFor: currentShow,
+        });
+        const data = await response.json();
+        if (!response.ok) {
+          toast.warn(data.message);
+          return;
+        }
+        toast.success(data.message);
+        setStatusReply(!replySuccess);
+        setReplyCmt("");
+      } catch (err) {
+        toast.warn(err);
+      }
     }
   };
 
@@ -195,11 +240,15 @@ function GameDetail() {
         <Text>Thời gian phản hồi trung bình: 5 phút</Text>
         <form className="flex flex-col gap-2" style={{ width: "80%" }}>
           <textarea
+            value={cmt}
+            onFocus={() => setCmtFocus(true)}
+            onBlur={() => setCmtFocus(false)}
             className="border border-gray-300 rounded p-3 hover:outline-none hover:ring-1 hover:ring-[rgb(36,122,242)] focus:outline-none focus:ring-1 focus:ring-[rgb(36,122,242)]"
             placeholder="Nhập nội dung bình luận"
             onChange={(e) => setCmt(e.target.value)}
             style={{ width: "100%", height: "120px" }}
           />
+          {errors.cmt && <p className="text-red-500 text-sm">{errors.cmt}</p>}
           <button
             onClick={(e) => handleOnSendComment(e)}
             type="submit"
@@ -230,7 +279,18 @@ function GameDetail() {
                 Trả lời
               </p>
               <div>
-                <CommentItem parentId={cmt.commentId} gameId={id} setCurrentShow={setCurrentShow} currentShow={currentShow} handleOnSendComment={handleOnSendComment}/>
+                <CommentItem
+                  parentId={cmt.commentId}
+                  gameId={id}
+                  setCurrentShow={setCurrentShow}
+                  currentShow={currentShow}
+                  handleOnRepCmt={handleOnRepCmt}
+                  setReplyCmt={setReplyCmt}
+                  replyCmt={replyCmt}
+                  errors={errors}
+                  replySuccess={replySuccess}
+                  setStatusReply={setStatusReply}
+                />
               </div>
             </div>
           </div>
