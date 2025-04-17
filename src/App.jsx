@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import "./app.css"
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import GameDetail from "./pages/GameDetail";
@@ -20,6 +21,10 @@ import ForgotPassword from "./pages/ForgotPassword";
 import Footer from "./components/Footer";
 import Security from "./pages/Security";
 import { ToastContainer } from "react-toastify";
+import Dashboard from "./pages/admin/Dashboard";
+import LayoutDefault from "./components/admin/LayoutDefault";
+import Analyst from "./pages/admin/Analyst";
+import Message from "./pages/admin/Message";
 
 function App() {
   return (
@@ -27,37 +32,44 @@ function App() {
       <CartProvider>
         <UserProvider>
           <Navbar />
-          <ToastContainer position="bottom-right"/>
-            <main className="pt-16">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/game/:id" element={<GameDetail />} />
-                <Route path="/games" element={<Game />} />
-                <Route path="/genre/:id" element={<GameForCategories />} />
-                <Route path="/game-title/:id" element={<GameByTitle />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                <Route path="/user" element={<UserProfile />}>
-                  <Route path="/user/profile" element={<Account />} />
-                  <Route
-                    path="/user/order-history"
-                    element={<OrderHistory />}
-                  />
-                  <Route
-                    path="/user/payment-history"
-                    element={<PaymentHistory />}
-                  />
-                  <Route
-                    path="/user/order-history/order-detail/:id"
-                    element={<OrderDetail />}
-                  />
-                  <Route path="/user/security" element={<Security />} />
-                </Route>
-                <Route path="/deposit" element={<DepositPage />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-              </Routes>
-            </main>
+          <ToastContainer position="bottom-right" />
+          <main className="pt-16">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/game/:id" element={<GameDetail />} />
+              <Route path="/games" element={<Game />} />
+              <Route path="/genre/:id" element={<GameForCategories />} />
+              <Route path="/game-title/:id" element={<GameByTitle />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              {/* <Route path="/register" element={<Admin />} /> */}
+              <Route path="/user" element={<UserProfile />}>
+                <Route path="/user/profile" element={<Account />} />
+                <Route
+                  path="/user/order-history"
+                  element={<OrderHistory />}
+                />
+                <Route
+                  path="/user/payment-history"
+                  element={<PaymentHistory />}
+                />
+                <Route
+                  path="/user/order-history/order-detail/:id"
+                  element={<OrderDetail />}
+                />
+                <Route path="/user/security" element={<Security />} />
+              </Route>
+              <Route path="/deposit" element={<DepositPage />} />
+              <Route path="/forgot-password" element={<ForgotPassword />}
+              />
+              <Route path='/admin' element={<LayoutDefault />}>
+                <Route index element={<Dashboard />} />
+                <Route path="/admin/analyst" element={<Analyst />} />
+              </Route>
+
+            </Routes>
+          </main>
           <Footer />
           {/* <Footer/> */}
         </UserProvider>

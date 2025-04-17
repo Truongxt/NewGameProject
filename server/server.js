@@ -6,11 +6,12 @@ import mongoose from "mongoose";
 import cors from 'cors'
 import orderRoute from "./routes/orderRoute.js";
 import transRoute from "./routes/transactionRoute.js";
+import gameRoutes from "./routes/gameRoutes.js";
 
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 
 mongoose
   .connect(process.env.MONGO_URI)
@@ -24,6 +25,7 @@ app.use("/users", userRoute);
 app.use("/games", gameRoute);
 app.use("/orders", orderRoute);
 app.use("/trans", transRoute);
+app.use("/GameKey", gameRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running at 

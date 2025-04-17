@@ -175,4 +175,12 @@ export const getGameByParams = async (params) => {
   const data = await response.json();
   return { games: data, total: totalCount };
 };
-//end end
+
+export const addGameKey = async (gameId, newKey) => {
+  const response = await fetch("http://localhost:5000/GameKey/add-game-key", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ gameId, newKey }),
+  });
+  return response.json();
+};
