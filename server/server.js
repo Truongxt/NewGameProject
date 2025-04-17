@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import cors from 'cors'
 import orderRoute from "./routes/orderRoute.js";
 import transRoute from "./routes/transactionRoute.js";
+import commentRoute from "./routes/commentRoute.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ mongoose
 app.use(cors());
 app.use(express.json());
 
+app.use("/comments", commentRoute);
 app.use("/users", userRoute);
 app.use("/games", gameRoute);
 app.use("/orders", orderRoute);
