@@ -1,18 +1,27 @@
-import { CloseOutlined, OpenAIOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Drawer, Form, Input, Layout, Space, Typography } from 'antd';
-import { useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import ChatBot from './ChatBot';
+import {
+  CloseOutlined,
+  OpenAIOutlined,
+  SearchOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
+import { Button, Drawer, Form, Input, Layout, Space, Typography } from "antd";
+import { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import ChatBot from "./ChatBot";
+import { useCart } from "../provider/CartProvider.jsx";
+import UserBox from "../components/User/UserBox"; // Import UserBox component
 
 const { Header } = Layout;
 const { Text } = Typography;
 
 function Navbar() {
+  const { totalItems } = useCart();
   const [open, setOpen] = useState(false);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const inputRef = useRef()
+  const inputRef = useRef();
 
   const showDrawer = () => {
     setOpen(true);
@@ -22,20 +31,20 @@ function Navbar() {
   };
   const handleSubmit = () => {
     //dẫn tới trang tìm kiếm
-    if (inputRef.current.input.value === '') return
+    if (inputRef.current.input.value === "") return;
 
-    navigate(`/game-title/${inputRef.current.input.value}`)
-  }
+    navigate(`/game-title/${inputRef.current.input.value}`);
+  };
 
   return (
-    <Layout >
+    <Layout>
       <Header className="bg-white shadow-sm fixed w-full z-50 flex items-center justify-between px-6">
         <Link to="/">
           <Text className="text-2xl font-bold text-blue-600">GameStore</Text>
         </Link>
 
-        <Form layout='inline' onFinish={handleSubmit}>
-          <Form.Item >
+        <Form layout="inline" onFinish={handleSubmit}>
+          <Form.Item>
             <Input
               placeholder="Tìm kiếm game..."
               prefix={<SearchOutlined className="text-gray-400 " />}
@@ -51,11 +60,13 @@ function Navbar() {
         </Form>
 
         <Space>
-          <Button type="text" icon={<ShoppingCartOutlined />}>
-            Giỏ hàng (0)
-          </Button>
+          <Link to="/cart">
+            <Button type="text" icon={<ShoppingCartOutlined />}>
+              Giỏ hàng ({totalItems})
+            </Button>
+          </Link>
           <Button type="text" icon={<UserOutlined />}>
-            Tài khoản
+            <UserBox/>
           </Button>
           <Button type="text" icon={<OpenAIOutlined />} onClick={showDrawer}>
             Trợ lý AI
