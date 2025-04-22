@@ -5,6 +5,7 @@ function Content(){
     return (
         <>
             <div className="content">
+                <Header/>
                 <TableDesign/>
             </div>
         </>

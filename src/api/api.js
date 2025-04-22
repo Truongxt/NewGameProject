@@ -21,7 +21,45 @@ export const login = async ({email, password}) => {
         throw err;
     }
 }
+//login cho admin
+export const loginAdmin = async ({ email, password }) => {
+  try {
+    const response = await fetch(`${user_api}/admin-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
 
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Đăng nhập thất bại!");
+    }
+
+    return data; // Trả về token và thông tin user
+  } catch (err) {
+    console.error("Lỗi khi đăng nhập:", err);
+    throw err;
+  }
+};
+
+export const getAllUsers = async () => {
+  try {
+    const response = await fetch(`${user_api}/allUsers`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};
 //đổi mật khẩu
 export const changePassword = async ({ email, currentPass, newPass }) => {
   try {
@@ -183,4 +221,28 @@ export const addGameKey = async (gameId, newKey) => {
     body: JSON.stringify({ gameId, newKey }),
   });
   return response.json();
+};
+
+
+//get trung bình doanh thu theo tháng
+export const getAverageRevenueByMonth = async () => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/orders/get-average-revenue`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Lỗi khi lấy trung bình doanh thu");
+    }
+
+    const data = await response.json();
+    return data.averageRevenue;
+  } catch (error) {
+    console.error("Lỗi khi gọi API trung bình doanh thu:", error);
+    throw error;
+  }
 };

@@ -1,5 +1,5 @@
-import { Routes, Route } from "react-router-dom";
-import "./app.css"
+import { Routes, Route, useLocation } from "react-router-dom";
+import "./app.css";
 import Navbar from "./components/Navbar";
 import Home from "./pages/Home";
 import GameDetail from "./pages/GameDetail";
@@ -18,22 +18,31 @@ import { UserProvider } from "./provider/UserProvider";
 import OrderDetail from "./pages/OrderDetail";
 import DepositPage from "./pages/DepositPage";
 import ForgotPassword from "./pages/ForgotPassword";
-import Footer from "./components/Footer";
 import Security from "./pages/Security";
 import { ToastContainer } from "react-toastify";
 import Dashboard from "./pages/admin/Dashboard";
 import LayoutDefault from "./components/admin/LayoutDefault";
 import Analyst from "./pages/admin/Analyst";
 import Message from "./pages/admin/Message";
+import LoginAdminPage from "./pages/LoginAdminPage";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+
+
 
 function App() {
+  const location = useLocation();
+
+  const isAdminRoute = location.pathname.startsWith("/admin") || location.pathname.startsWith("/login");
+  console.log(isAdminRoute);
+
   return (
-    <div className="min-h-screen bg-[rgb(242,243,245)]">
+    <div className={`min-h-screen ${isAdminRoute ? "bg-white" : "bg-[rgb(242,243,245)]"}`}>
       <CartProvider>
         <UserProvider>
-          <Navbar />
+          {!isAdminRoute && <Navbar />}
           <ToastContainer position="bottom-right" />
-          <main className="pt-16">
+          <main className={`${isAdminRoute ? "pt-0" : "pt-16"} ${isAdminRoute ? "w-full h-full" : ""}`}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/game/:id" element={<GameDetail />} />
@@ -43,35 +52,28 @@ function App() {
               <Route path="/cart" element={<Cart />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
-              {/* <Route path="/register" element={<Admin />} /> */}
-              <Route path="/user" element={<UserProfile />}>
-                <Route path="/user/profile" element={<Account />} />
-                <Route
-                  path="/user/order-history"
-                  element={<OrderHistory />}
-                />
-                <Route
-                  path="/user/payment-history"
-                  element={<PaymentHistory />}
-                />
-                <Route
-                  path="/user/order-history/order-detail/:id"
-                  element={<OrderDetail />}
-                />
-                <Route path="/user/security" element={<Security />} />
-              </Route>
-              <Route path="/deposit" element={<DepositPage />} />
-              <Route path="/forgot-password" element={<ForgotPassword />}
-              />
-              <Route path='/admin' element={<LayoutDefault />}>
+              {/* Admin Routes */}
+              <Route path="/admin" element={<ProtectedRoute><LayoutDefault /></ProtectedRoute>}>
                 <Route index element={<Dashboard />} />
-                <Route path="/admin/analyst" element={<Analyst />} />
+                <Route path="analyst" element={<Analyst />} />
+                <Route path="message" element={<Message />} />
+              </Route>
+              <Route path="/login-admin" element={<LoginAdminPage />} />
+
+              {/* User Routes */}
+              <Route path="/user" element={<UserProfile />}>
+                <Route path="profile" element={<Account />} />
+                <Route path="order-history" element={<OrderHistory />} />
+                <Route path="payment-history" element={<PaymentHistory />} />
+                <Route path="order-history/order-detail/:id" element={<OrderDetail />} />
+                <Route path="security" element={<Security />} />
               </Route>
 
+              {/* Other Routes */}
+              <Route path="/deposit" element={<DepositPage />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
             </Routes>
           </main>
-          <Footer />
-          {/* <Footer/> */}
         </UserProvider>
       </CartProvider>
     </div>

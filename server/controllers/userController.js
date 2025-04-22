@@ -284,3 +284,48 @@ export const verifyResetCode = async (req, res) => {
     return res.status(500).json({ message: "Lỗi khi xác thực mã." });
   }
 };
+
+
+
+export const adminLogin = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: "Tài khoản không tồn tại!" });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Mật khẩu không chính xác!" });
+    }
+
+    if (user.role !== "ADMIN") {
+      return res.status(403).json({ message: "Bạn không có quyền truy cập!" });
+    }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+
+    return res.status(200).json({
+      message: "Đăng nhập thành công!",
+      token,
+      role: user.role,
+    });
+  } catch (error) {
+    console.error("Lỗi khi đăng nhập admin:", error);
+    return res.status(500).json({ message: "Lỗi server!" });
+  }
+};
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({});
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách người dùng:", error);
+    return res.status(500).json({ message: "Lỗi server!" });
+  }
+}
