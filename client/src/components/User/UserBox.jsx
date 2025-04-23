@@ -7,6 +7,7 @@ import { CgLogOut } from "react-icons/cg";
 import { useCart } from "../../provider/CartProvider";
 import { IoMdAddCircleOutline } from "react-icons/io";
 import { MdOutlineHistory } from "react-icons/md";
+import { toast } from "react-toastify";
 const UserBox = () => {
   const { user, getFirstName, setUser } = useUser(); // Lấy thông tin user từ context
   const { formatCurrency } = useCart();
@@ -68,6 +69,7 @@ const UserBox = () => {
             onClick={() => {
               localStorage.removeItem("token");
               setUser(null);
+              toast.success("Đã đăng xuất!")
             }}
             className="px-4 py-4 text-gray-700 hover:bg-gray-100 rounded flex items-center gap-2"
           >

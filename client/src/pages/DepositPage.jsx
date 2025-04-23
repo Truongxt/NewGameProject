@@ -3,10 +3,12 @@ import { useUser } from "../provider/UserProvider";
 import { QRCodeSVG } from "qrcode.react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../provider/CartProvider";
+import { getCurrentUser } from "../api/api";
+import { toast } from "react-toastify";
 export default function DepositPage() {
   const navigate = useNavigate();
   const { formatCurrency } = useCart();
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const [transactionId, setTransactionId] = useState("");
   const [isOpen, setIsOpen] = useState(-1);
   const [isOpenModal, setOpenModal] = useState(false);
@@ -92,19 +94,24 @@ export default function DepositPage() {
         const response = await fetch(
           `http://localhost:5000/trans/status?transId=${transId}`
         );
-  
+
         if (response.status === 404) {
           clearInterval(interval); // Dừng polling nếu giao dịch không tồn tại
           setOpenModal(false); // Đóng modal nếu đang mở
           return;
         }
-  
+
         const data = await response.json();
-  
+
         if (data.status === true) {
           clearInterval(interval); // Dừng polling
           setOpenModal(false); // Đóng modal
+          const token = localStorage.getItem("token");
+          const user = await getCurrentUser(token);
+          setUser(user);
+          console.log("Người dùng hiện tại:", user);
           navigate("/user/payment-history"); // Chuyển sang trang lịch sử giao dịch
+          toast.success("Thanh toán thành công!")
         }
       } catch (err) {
         console.error("Lỗi khi kiểm tra trạng thái giao dịch:", err);
@@ -232,7 +239,9 @@ export default function DepositPage() {
                 </div>
               </div>
               <p
-                onClick={() => {setOpenModal(false), deleteTrans(transactionId)}}
+                onClick={() => {
+                  setOpenModal(false), deleteTrans(transactionId);
+                }}
                 className="absolute right-[-5px] top-[-10px] text-xl hover:border hover:cursor-pointer px-2 flex items-center"
               >
                 X
@@ -241,12 +250,18 @@ export default function DepositPage() {
             <div className="flex mt-2 mx-2 py-6 border-b border-t justify-between font-medium">
               <p>Số tiền: {formatCurrency(amount)}</p>
               <p>
-                Phí giao dịch: {formatCurrency(amount * phuongThuc[isOpen].phi)}{" "}
-                ({phuongThuc[isOpen].phi * 100}%)
+                Phí giao dịch:{" "}
+                {formatCurrency(
+                  Number(amount) * (phuongThuc[isOpen]?.phi || 0)
+                )}{" "}
+                ({(phuongThuc[isOpen]?.phi || 0) * 100}%)
               </p>
               <p>
                 Tổng tiền:{" "}
-                {formatCurrency(amount + phuongThuc[isOpen].phi * 100)}
+                {formatCurrency(
+                  Number(amount) +
+                    Number(amount) * (phuongThuc[isOpen]?.phi || 0)
+                )}
               </p>
             </div>
             <div className="mt-2 flex gap-5 items-center">

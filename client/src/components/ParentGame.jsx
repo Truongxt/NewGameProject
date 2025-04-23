@@ -42,7 +42,7 @@ function ParentGame({ games, totalGames, page, setPage, setGames, setTotalGames,
     }, [page, platform, genre, priceFrom, priceTo, sort]);
 
     const resetFilters = () => {
-        setplatform("Tất cả");
+        setPlatform("Tất cả");
         setGenre("Tất cả");
         setPriceFrom(null);
         setPriceTo(null);
