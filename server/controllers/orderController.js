@@ -1,5 +1,30 @@
 import Order from "../models/order.js";
 import User from "../models/user.js"
+import { generateRandomCode } from "../utils/generateRandomCode.js";
+import { sendOrderEmail } from "../utils/mailer.js";
+
+export const sendOrderMail = async (req, res) => {
+  const {receiver, orderId} = req.body;
+  try{
+    const order = await Order.findOne({orderId});
+
+    let products = [];
+
+    order.items.map((item) => {
+      let keys = [];
+      for(let i = 0; i < item.quantity; i++){
+        keys.push(generateRandomCode());
+      }
+      products.push({productName: item.productName, quantity: item.quantity, keys});
+    })
+
+    await sendOrderEmail(receiver, {orderId: orderId, orderDate: order.orderDate, total: order.totalAmount, products})
+    return res.status(200).json({message: "Ok"});
+  }catch(err){
+    throw err;
+  }
+}
+
 export const payBill = async (req, res) => {
   const { email, image, items, receiver, totalAmount } = req.body;
 
