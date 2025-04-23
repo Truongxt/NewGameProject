@@ -108,7 +108,7 @@ const OrderHistory = () => {
                   {formatCurrency(item.totalAmount)}
                 </td>
                 <td className="border border-gray-300 px-4 py-2">
-                  <Link to={`/user/order-history/order-detail/${item.orderId}`}>
+                  <Link className="text-[rgb(59,130,245)] hover:underline" to={`/user/order-history/order-detail/${item.orderId}`}>
                     Chi tiết
                   </Link>
                 </td>

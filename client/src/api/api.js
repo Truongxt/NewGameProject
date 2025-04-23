@@ -56,6 +56,30 @@ export const login = async ({ email, password }) => {
   }
 };
 
+
+export const getCurrentUser = async (token) => {
+  try {
+    const response = await fetch(`${user_api}/me`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || "Lỗi xác thực người dùng");
+    }
+
+    const data = await response.json();
+    return data.user;
+  } catch (err) {
+    console.error("Lỗi khi lấy người dùng hiện tại:", err.message);
+    throw err;
+  }
+};
+
+
 //đổi mật khẩu
 export const changePassword = async ({ email, currentPass, newPass }) => {
   try {

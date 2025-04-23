@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Register.css";
+import { toast } from "react-toastify";
 const Register = () => {
   const navigate = useNavigate();
   const [name, setName] = useState("");
@@ -77,7 +78,7 @@ const Register = () => {
           );
         }
 
-        alert(data.message);
+        toast.success(data.message);
         navigate("/login");
       } catch (err) {
         console.log("Xảy ra lỗi khi đăng ký tài khoản: ", err);
