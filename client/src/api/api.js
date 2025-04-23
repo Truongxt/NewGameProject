@@ -80,6 +80,29 @@ export const getCurrentUser = async (token) => {
 };
 
 
+export const sendOrderMail = async ({ receiver, orderId }) => {
+  try {
+    const response = await fetch("http://localhost:5000/orders/send-order-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ receiver, orderId }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Lỗi khi gửi email đơn hàng");
+    }
+
+    return await response.json(); // { message: "Ok" }
+  } catch (error) {
+    console.error("Lỗi gửi mail:", error);
+    throw error;
+  }
+};
+
+
 //đổi mật khẩu
 export const changePassword = async ({ email, currentPass, newPass }) => {
   try {

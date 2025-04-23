@@ -3,7 +3,7 @@ import { useCart } from "../../provider/CartProvider";
 import { useUser } from "../../provider/UserProvider";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getCurrentUser } from "../../api/api";
+import { getCurrentUser, sendOrderMail } from "../../api/api";
 
 const PayAuth = () => {
   const { user, setUser } = useUser();
@@ -62,6 +62,9 @@ const PayAuth = () => {
       setUser(user2);
       navigate(`/user/order-history/order-detail/${data.order.orderId}`);
 
+      const response3 =  await sendOrderMail({receiver: data.order.receiver, orderId: data.order.orderId});
+      console.log(response3.message)
+      
       await fetch("http://localhost:5000/users/reset-authCode", {
         method: "PATCH",
         headers: {
@@ -69,6 +72,8 @@ const PayAuth = () => {
         },
         body: JSON.stringify({ email: user.email }),
       });
+
+      
     } catch (error) {
       console.log(error);
     }
