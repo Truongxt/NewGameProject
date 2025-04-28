@@ -299,7 +299,7 @@ export const getAllUsers = async () => {
 };
 
 export const addGameKey = async (gameId, newKey) => {
-  const response = await fetch("http://localhost:5000/GameKey/add-game-key", {
+  const response = await fetch(`${keygame_api}/add-game-key`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ gameId, newKey }),

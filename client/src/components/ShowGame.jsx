@@ -1,10 +1,28 @@
 import { Button, Card } from "antd";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useCart } from "../provider/CartProvider";
-
+import { useState, useEffect } from "react";
+import { toast } from "react-toastify";
+import { checkKeyGame } from "../api/api";
 function ShowGame({ game }) {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const [exist, setExist] = useState(0);
+
+  const checkExistKeyGame = async () => {
+    try {
+      const respone = await checkKeyGame(game.id);
+      setExist(respone);
+      console.log(respone);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    console.log(game.id);
+      checkExistKeyGame();
+    }, []);
 
   function formatPrice(price) {
     return new Intl.NumberFormat("vi-VN", {
@@ -14,8 +32,8 @@ function ShowGame({ game }) {
   }
   return (
     // <NavLink to={`/game/${game.id}`} className="hover:no-underline">
-      <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
-        {/* <img src={game.thumbnail} alt={game.title} className="w-full h-48 object-cover rounded-t-lg" />
+    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow">
+      {/* <img src={game.thumbnail} alt={game.title} className="w-full h-48 object-cover rounded-t-lg" />
                 <div className="p-4">
                     <h3 className="font-semibold text-lg mb-2">{game.title}</h3>
                     <div className="flex justify-between items-center">
@@ -30,24 +48,26 @@ function ShowGame({ game }) {
                     </button>
                 </div> */}
 
-        <Card
-          hoverable
-          cover={<img alt="Hot Game" src={game.thumbnail} />}
-          onClick={() => navigate(`/game/${game.id}`)}
+      <Card
+        hoverable
+        cover={<img alt="Hot Game" src={game.thumbnail} />}
+        onClick={() => navigate(`/game/${game.id}`)}
+      >
+        <Card.Meta title={game.title} description={game.short_description} />
+        <Button
+          type="primary"
+          className="mt-4"
+          onClick={(e) => {
+            e.stopPropagation();
+            addToCart(game);
+            setExist(exist - 1);
+          }}
+          disabled={!exist > 0}
         >
-          <Card.Meta title={game.title} description={game.short_description} />
-          <Button
-            type="primary"
-            className="mt-4"
-            onClick={(e) => {
-              e.stopPropagation();
-              addToCart(game);
-            }}
-          >
-            Thêm vào giỏ hàng
-          </Button>
-        </Card>
-      </div>
+          {exist > 0 ? "Thêm vào giỏ hàng" : "Hết hàng"}
+        </Button>
+      </Card>
+    </div>
     // </NavLink>
   );
 }

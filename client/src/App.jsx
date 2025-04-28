@@ -27,6 +27,7 @@ import Message from "./pages/admin/Message";
 import LoginAdminPage from "./pages/LoginAdminPage";
 import Dashboard from "./pages/admin/Dashboard";
 import "./App.css"
+import ZaloButton from "./components/ZaloButton";
 
 function App() {
   const location = useLocation();
@@ -37,7 +38,7 @@ function App() {
     <div className="min-h-screen bg-[rgb(242,243,245)]">
       <CartProvider>
         <UserProvider>
-
+        <ZaloButton/>
           {!isAdminRoute && <Navbar />}
           <ToastContainer position="bottom-right" />
           <main className={isAdminRoute ? "" : "pt-16"}>           
