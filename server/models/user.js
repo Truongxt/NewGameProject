@@ -17,6 +17,7 @@ const UserSchema = new mongoose.Schema({
   soTienDaNap: { type: Number, default: 0 },
   authCode: { type: Number },
   verified: { type: Boolean, default: false },
+  role: { type: String, enum: ["USER", "ADMIN"], default: "USER" }
 });
 
 const User = mongoose.model("User", UserSchema);

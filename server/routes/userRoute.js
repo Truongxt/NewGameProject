@@ -1,5 +1,5 @@
 import express from "express";
-import { changePassword, forgotPassword, getAuthCode, getCurrentUser, login, register, resetAuthCode, sendCode, verifyAccount, verifyResetCode } from "../controllers/userController.js";
+import { changePassword, forgotPassword, getAuthCode, getCurrentUser, login, register, resetAuthCode, sendCode, verifyAccount, verifyResetCode,adminLogin,getAllUsers } from "../controllers/userController.js";
 
 const userRoute = express.Router();
 
@@ -13,5 +13,6 @@ userRoute.post("/register", register);
 userRoute.get("/verify-account", verifyAccount);
 userRoute.post("/login", login)
 userRoute.get("/me", getCurrentUser);
-
+userRoute.post("/admin-login", adminLogin);
+userRoute.get("/allUsers", getAllUsers);
 export default userRoute;

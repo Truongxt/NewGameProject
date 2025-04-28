@@ -256,4 +256,74 @@ export const getGameByParams = async (params) => {
   const data = await response.json();
   return { games: data, total: totalCount };
 };
+
+export const getAllUsers = async () => {
+  try {
+    const response = await fetch(`${user_api}/allUsers`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    throw error;
+  }
+};
+
+export const addGameKey = async (gameId, newKey) => {
+  const response = await fetch("http://localhost:5000/GameKey/add-game-key", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ gameId, newKey }),
+  });
+  return response.json();
+};
+
+export const getAverageRevenueByMonth = async () => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/orders/get-average-revenue`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Lỗi khi lấy trung bình doanh thu");
+    }
+
+    const data = await response.json();
+    return data.averageRevenue;
+  } catch (error) {
+    console.error("Lỗi khi gọi API trung bình doanh thu:", error);
+    throw error;
+  }
+};
+
+export const loginAdmin = async ({ email, password }) => {
+  try {
+    const response = await fetch(`${user_api}/admin-login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Đăng nhập thất bại!");
+    }
+
+    return data.user;
+  } catch (err) {
+    console.error("Lỗi khi lấy người dùng hiện tại:", err.message);
+    throw err;
+  }
+};
 //end end

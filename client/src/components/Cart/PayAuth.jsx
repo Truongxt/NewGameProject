@@ -53,6 +53,17 @@ const PayAuth = () => {
           }),
         }
       );
+
+      console.log(payBillResponse);
+      if(!payBillResponse.ok) {
+        const errorData = await payBillResponse.json();
+
+        alert(errorData.message);
+        navigate("/user/order-history");
+        return;
+      }
+    
+      
       const data = await payBillResponse.json();
       console.log(data);
       clearCart();
@@ -76,6 +87,7 @@ const PayAuth = () => {
       
     } catch (error) {
       console.log(error);
+
     }
   };
 

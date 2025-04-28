@@ -7,6 +7,7 @@ import cors from 'cors'
 import orderRoute from "./routes/orderRoute.js";
 import transRoute from "./routes/transactionRoute.js";
 import commentRoute from "./routes/commentRoute.js";
+import gameRoutes from "./routes/gameRoutes.js";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ app.use("/users", userRoute);
 app.use("/games", gameRoute);
 app.use("/orders", orderRoute);
 app.use("/trans", transRoute);
+app.use("/GameKey", gameRoutes);
 
 app.listen(port, () => {
   console.log(`Server is running at 
