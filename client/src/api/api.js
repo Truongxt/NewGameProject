@@ -1,7 +1,9 @@
 export const api = "http://localhost:3000/games";
 export const user_api = "http://localhost:5000/users";
 export const comment_api = "http://localhost:5000/comments";
-
+export const order_api = "http://localhost:5000/orders";
+export const game_api = "http://localhost:5000/games";
+export const keygame_api = "http://localhost:5000/game-key";
 //comment
 export const comment = async ({ gameId, userEmail, content, responseFor }) => {
   try {
@@ -23,8 +25,19 @@ export const comment = async ({ gameId, userEmail, content, responseFor }) => {
   }
 };
 
+//kiểm tra game có còn hàng không
+export const checkKeyGame = async (gameId) =>{
+  try{
+    const response = await fetch(`${keygame_api}/check-game?gameId=${gameId}`, {method:"GET"});
+    const data = await response.json();
+    return data.quantity;
+  }catch(err){
+    throw err;
+  }
+}
+
 //get comment
-export const getComment = async ({gameId, responseFor}) => {
+export const getComment = async ({ gameId, responseFor }) => {
   try {
     const response = await fetch(
       responseFor
@@ -56,7 +69,6 @@ export const login = async ({ email, password }) => {
   }
 };
 
-
 export const getCurrentUser = async (token) => {
   try {
     const response = await fetch(`${user_api}/me`, {
@@ -79,10 +91,9 @@ export const getCurrentUser = async (token) => {
   }
 };
 
-
 export const sendOrderMail = async ({ receiver, orderId }) => {
   try {
-    const response = await fetch("http://localhost:5000/orders/send-order-email", {
+    const response = await fetch(`${order_api}/send-order-email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +112,6 @@ export const sendOrderMail = async ({ receiver, orderId }) => {
     throw error;
   }
 };
-
 
 //đổi mật khẩu
 export const changePassword = async ({ email, currentPass, newPass }) => {
@@ -122,6 +132,22 @@ export const changePassword = async ({ email, currentPass, newPass }) => {
   } catch (error) {
     console.error("Error changing password:", error);
     throw error;
+  }
+};
+
+export const verifyPayment = async ({ email, subject, content }) => {
+  try {
+    const response = await fetch(`${user_api}/verify-payment`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, subject, content }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (err) {
+    console.error("Lỗi khi gửi mã xác thực. " + err);
   }
 };
 
@@ -256,7 +282,6 @@ export const getGameByParams = async (params) => {
   const data = await response.json();
   return { games: data, total: totalCount };
 };
-
 export const getAllUsers = async () => {
   try {
     const response = await fetch(`${user_api}/allUsers`, {

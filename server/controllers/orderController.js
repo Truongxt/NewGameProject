@@ -2,7 +2,7 @@ import GameKey from "../models/GameKey.js";
 import Order from "../models/order.js";
 import User from "../models/user.js"
 import { generateRandomCode } from "../utils/generateRandomCode.js";
-import { sendOrderEmail, sendVerificationEmail } from "../utils/mailer.js";
+import { sendOrderEmail } from "../utils/mailer.js";
 
 export const sendOrderMail = async (req, res) => {
   const { receiver, orderId } = req.body;
@@ -12,11 +12,7 @@ export const sendOrderMail = async (req, res) => {
     let products = [];
 
     order.items.map((item) => {
-      let keys = [];
-      for (let i = 0; i < item.quantity; i++) {
-        keys.push(generateRandomCode());
-      }
-      products.push({ productName: item.productName, quantity: item.quantity, keys });
+      products.push({ productName: item.productName, quantity: item.quantity, keys: item.keys });
     })
 
     await sendOrderEmail(receiver, { orderId: orderId, orderDate: order.orderDate, total: order.totalAmount, products })
@@ -43,26 +39,20 @@ export const payBill = async (req, res) => {
       const gameKey = await GameKey.findOne({ gameId: productID });
       if (!gameKey || !gameKey.gameKeys || gameKey.gameKeys.length === 0) {
         return res.status(400).json({
-          message: `Không có key game nào khả dụng cho sản phẩm: ${productName}`,
+          message: `Sản phẩm: ${productName} đã hết hàng. Vui lòng xóa sản phẩm ra giỏ hàng!`,
         });
       }
 
       if (gameKey.gameKeys.length < quantity) {
         return res.status(400).json({
-          message: `Không đủ key game cho sản phẩm: ${productName}. Số lượng còn lại: ${gameKey.gameKeys.length}`,
+          message: `Không đủ key game cho : ${productName}. Số lượng còn lại: ${gameKey.gameKeys.length}`,
         });
       }
 
       // Lấy số lượng key game tương ứng
       const keysToSend = gameKey.gameKeys.splice(0, quantity);
-      await gameKey.save(); // Lưu lại thay đổi trong cơ sở dữ liệu
-
-      // Gửi email với các key game
-      const keyList = keysToSend.join(", ");
-      const subject = `Key game cho sản phẩm: ${productName}`;
-      const content = `Cảm ơn bạn đã mua sản phẩm ${productName}. Đây là key game của bạn: ${keyList}`;
-
-      await sendVerificationEmail(email, subject, content, "", "code");
+      item.keys = keysToSend;
+      await gameKey.save(); 
     }
 
     // Tạo đơn hàng sau khi xử lý thành công

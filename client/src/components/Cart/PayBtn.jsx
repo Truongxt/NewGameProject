@@ -2,9 +2,11 @@ import { useNavigate } from "react-router-dom";
 import { useCart } from "../../provider/CartProvider";
 import { useUser } from "../../provider/UserProvider";
 import { useState } from "react";
+import { verifyPayment } from "../../api/api";
+import { toast } from "react-toastify";
 
 const PayBtn = (props) => {
-  const {user} = useUser();
+  const { user } = useUser();
   const navigate = useNavigate();
   const { path } = props;
   const { content } = props;
@@ -13,24 +15,23 @@ const PayBtn = (props) => {
   const { className } = props;
   const { icon } = props;
   const [isSending, setIsSending] = useState(false);
-  const handleOnPayConfirm = async () =>{
-    if(isSending) return;
-    setIsSending(true)
-    try{
-      const response = await fetch("http://localhost:5000/users/verify-payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({email: user.email, subject: "Xác thực trước khi mua hàng", content: "Mã xác thực thanh toán"})
+  const handleOnPayConfirm = async () => {
+    if (isSending) return;
+    setIsSending(true);
+    try {
+      const response = await verifyPayment({
+        email: user.email,
+        subject: "Xác thực trước khi mua hàng",
+        content: "Mã xác thực thanh toán",
       });
-      console.log(response)
-    }catch(error){
+      toast.success(response.message);  
+      console.log(response);
+    } catch (error) {
       console.log(error);
-    }finally{
+    } finally {
       setIsSending(false);
     }
-  }
+  };
 
   return (
     <button

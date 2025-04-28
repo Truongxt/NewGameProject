@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { comment, getComment, getGameById } from "../api/api";
+import { checkKeyGame, comment, getComment, getGameById } from "../api/api";
 import { IoIosSend } from "react-icons/io";
 import { FaRegUserCircle } from "react-icons/fa";
 import {
@@ -40,7 +40,8 @@ function GameDetail() {
   const [errors, setErrors] = useState({});
   const [isCmtFocus, setCmtFocus] = useState(false);
   const [replySuccess, setStatusReply] = useState(false);
-
+  const [exist, setExist] = useState(0);
+  
   const validate = () => {
     let newErr = {};
     if (isCmtFocus && cmt == "") {
@@ -51,6 +52,16 @@ function GameDetail() {
     }
     setErrors(newErr);
     return Object.keys(newErr).length === 0;
+  };
+
+  const checkExistKeyGame = async () => {
+    try {
+      const respone = await checkKeyGame(id);
+      setExist(respone);
+      console.log(respone);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const fetchCmt = async () => {
@@ -72,7 +83,7 @@ function GameDetail() {
         console.error("Lỗi khi gọi API:", error);
       }
     };
-
+    checkExistKeyGame();
     fetchGame();
     fetchCmt();
   }, [id]);
@@ -156,11 +167,19 @@ function GameDetail() {
           <Space direction="vertical" size="middle">
             <Text strong>
               Tình trạng:{" "}
-              <Badge
-                status="success"
-                text="Còn hàng"
-                style={{ marginLeft: "10px" }}
-              />
+              {exist ? (
+                <Badge
+                  status="success"
+                  text="Còn hàng"
+                  style={{ marginLeft: "10px" }}
+                />
+              ) : (
+                <Badge
+                  status="warning"
+                  text="Hết hàng"
+                  style={{ marginLeft: "10px" }}
+                />
+              )}
             </Text>
             <Text strong>Thể loại: {game.genre}</Text>
             <Title level={3} style={{ margin: 0 }} color="yellow">
@@ -182,9 +201,12 @@ function GameDetail() {
                 size="large"
                 onClick={() => {
                   addToCart(game);
+                  setExist(exist - 1);
                 }}
+                disabled={!exist > 0}
+                style={{width: "170px"}}
               >
-                Thêm vào giỏ hàng
+                {exist > 0 ? "Thêm vào giỏ hàng" : "Hết hàng"}
               </Button>
             </Space>
           </Space>

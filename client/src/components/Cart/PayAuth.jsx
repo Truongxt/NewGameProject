@@ -27,7 +27,7 @@ const PayAuth = () => {
       const authCodeData = await authCodeResponse.json();
       console.log(authCodeData.authCode);
       if (authCodeData.authCode !== parseInt(authCodeInput)) {
-        alert("Mã xác thực không đúng. Vui lòng kiểm tra lại.");
+        toast.warn("Mã xác thực không đúng. Vui lòng kiểm tra lại.");
         return;
       }
 
@@ -58,12 +58,10 @@ const PayAuth = () => {
       if(!payBillResponse.ok) {
         const errorData = await payBillResponse.json();
 
-        alert(errorData.message);
-        navigate("/user/order-history");
+        toast.warn(errorData.message);
         return;
       }
-    
-      
+
       const data = await payBillResponse.json();
       console.log(data);
       clearCart();

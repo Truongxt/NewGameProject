@@ -1,5 +1,31 @@
-import GameKey from "../models/GameKey.js"
+import GameKey from "../models/GameKey.js";
 
+export const getAll = async (req, res) => {
+  try {
+    const keyGamesObject = await GameKey.find();
+
+    return res.status(500).json(keyGamesObject);
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Lỗi khi thêm tìm key game"});
+  }
+};
+
+export const checkKeyGame = async (req, res) => {
+  try {
+    const { gameId } = req.query;
+
+    const keyGamesObject = await GameKey.findOne({ gameId });
+
+    return res.status(500).json({ quantity: keyGamesObject.gameKeys.length });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Lỗi khi thêm tìm key game"});
+      console.log("Lỗi check key game")
+  }
+};
 
 export const addGameKey = async (req, res) => {
   try {
@@ -26,6 +52,8 @@ export const addGameKey = async (req, res) => {
     await gameKey.save();
     res.status(200).json({ message: "Thêm key game thành công!", gameKey });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi khi thêm key game", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Lỗi khi thêm key game", error: error.message });
   }
 };
